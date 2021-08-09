@@ -3,23 +3,23 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    id: string;
+    id!: string;
 
     @Column({ type: "varchar", width: 30 })
-    firstname: string;
+    firstname!: string;
 
     @Column({ type: "varchar", width: 60 })
-    lastname: string;
+    lastname?: string;
 
     @Column({ type: "varchar", width: 50 })
-    email: string;
+    email!: string;
 
     @Column({ type: "varchar", width: 150, select: false })
-    password: string;
+    password!: string;
 
     @CreateDateColumn({ type: "timestamp with time zone" })
-    createdDate: Date;
+    createdDate!: Date;
 
     @UpdateDateColumn({ type: "timestamp with time zone" })
-    updatedDate: Date;
+    updatedDate!: Date;
 }
