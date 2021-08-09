@@ -8,7 +8,7 @@ import helmet from "helmet";
 
 import logger from "./config/logger";
 
-import { itemsRouter } from "./items/items.router";
+import { userRouter } from "./user/user.router";
 import { rateLimiter, speedLimiter } from "./utilities/rateSpeedLimiter";
 import { Server } from "http";
 
@@ -43,7 +43,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/api/v1", rateLimiter, speedLimiter, itemsRouter);
+app.use("/api/v1", rateLimiter, speedLimiter, userRouter);
 // handle 404
 app.use((_req: Request, res: Response) => {
     return res.status(404).json({

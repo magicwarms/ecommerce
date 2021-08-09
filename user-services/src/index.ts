@@ -1,5 +1,6 @@
 import cluster from "cluster";
 import os from "os";
+import { createConnection } from "typeorm";
 import startServer from "./start-server";
 
 const numCPUS = os.cpus().length;
@@ -44,8 +45,13 @@ function startServerDevelopment() {
 /**
  * Start server
  */
-if (process.env.NODE_ENV === "development") {
-    startServerDevelopment();
-} else {
-    startServerCluster();
-}
+createConnection()
+    .then(() => {
+        console.log("Connected to the database");
+        if (process.env.NODE_ENV === "development") {
+            startServerDevelopment();
+        } else {
+            startServerCluster();
+        }
+    })
+    .catch(() => new Error("Unable to connect to the database"));
