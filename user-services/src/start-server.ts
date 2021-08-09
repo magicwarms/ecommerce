@@ -5,9 +5,13 @@ import * as dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
+
+import logger from "./config/logger";
+
 import { itemsRouter } from "./items/items.router";
 import { rateLimiter, speedLimiter } from "./utilities/rateSpeedLimiter";
 import { Server } from "http";
+
 dotenv.config();
 
 /**
@@ -51,6 +55,7 @@ app.use((_req: Request, res: Response) => {
 // handle 500 Any error
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err);
+    logger.error(err);
     return res.status(500).json({
         success: false,
         data: {},
@@ -65,7 +70,6 @@ function setupCloseOnExit(server: Server) {
         console.info(`Server successfully closed at ${currentTime}`);
         if (options.exit) {
             process.exit(1);
-            // throw new Error('Exit process.exit Node JS');
         }
     }
 
