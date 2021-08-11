@@ -7,30 +7,24 @@ export const findAllUser = async (_req: Request, res: Response) => {
     return res.status(200).json({
         success: true,
         data: users,
-        message: "Users data is found",
+        message: "Users data found",
     });
 };
 
-export const findUser = (req: Request, res: Response) => {
+export const findUser = async (req: Request, res: Response) => {
     const userId = String(req.query.id);
-    if (!userId)
+    if (userId === null) {
         return res.status(422).json({
             success: false,
             data: null,
             message: "User ID is required",
         });
-    const findUser = UserService.findUser(userId);
-    if (!findUser) {
-        return res.status(200).json({
-            success: true,
-            data: null,
-            message: "User data is not found",
-        });
     }
+    const findUser = await UserService.findUser(userId);
     return res.status(200).json({
         success: true,
         data: findUser,
-        message: "User data found",
+        message: !findUser ? "User data not found" : "User data found",
     });
 };
 

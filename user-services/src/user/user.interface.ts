@@ -1,9 +1,10 @@
-export interface BaseUser {
+export interface UserInterface {
     id?: string;
     firstname: string;
-    lastname: number;
+    lastname: string;
     email: string;
     password?: string;
     createdDate: Date;
     updatedDate: Date;
+    deletedDate: Date;
 }

@@ -9,7 +9,7 @@ export class User {
     firstname!: string;
 
     @Column({ type: "varchar", width: 60 })
-    lastname?: string;
+    lastname!: string;
 
     @Column({ type: "varchar", width: 50 })
     email!: string;
