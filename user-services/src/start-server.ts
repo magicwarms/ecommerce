@@ -3,16 +3,19 @@
  */
 import * as dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
+import { Server } from "http";
+import cluster from "cluster";
+import os from "os";
 import cors from "cors";
 import helmet from "helmet";
 
+dotenv.config();
 import logger from "./config/logger";
 
 import { userRouter } from "./user/user.router";
 import { rateLimiter, speedLimiter } from "./utilities/rateSpeedLimiter";
-import { Server } from "http";
 
-dotenv.config();
+const numCPUS = os.cpus().length;
 
 /**
  * Set timezone
@@ -83,6 +86,46 @@ function setupCloseOnExit(server: Server) {
     // catches uncaught exceptions
     process.on("uncaughtException", exitHandler.bind(null, { exit: true }));
 }
+
+/**
+ * Setup server connection here
+ */
+const startServerCluster = () => {
+    console.info("Production/Staging server mode started!");
+    // Activate cluster for production mode
+    if (cluster.isMaster) {
+        console.info(`Master ${process.pid} is running`);
+        for (let i = 0; i < numCPUS; i += 1) {
+            cluster.fork();
+        }
+        cluster.on("exit", (worker, code) => {
+            // If cluster crashed, start new cluster connection
+            if (code !== 0 && !worker.exitedAfterDisconnect) {
+                console.warn("Cluster crashed, starting new cluster");
+                cluster.fork();
+            }
+        });
+    } else {
+        startServer()
+            .then()
+            .catch((err) => {
+                console.error(err);
+                logger.error(err);
+            });
+    }
+};
+
+const startServerDevelopment = () => {
+    console.info("Development server mode started!");
+    // Activate if development mode
+    startServer()
+        .then()
+        .catch((err) => {
+            console.error(err);
+            logger.error(err);
+        });
+};
+
 /**
  * Server Activation
  */
@@ -103,4 +146,8 @@ function startServer() {
     });
 }
 
-export default startServer;
+if (process.env.NODE_ENV === "development") {
+    startServerDevelopment();
+} else {
+    startServerCluster();
+}
