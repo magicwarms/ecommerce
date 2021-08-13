@@ -23,6 +23,7 @@ export const updateOrStoreUser = async (data: UserInterface) => {
     user.lastname = data.lastname;
     user.email = data.email;
     user.password = data.password;
+
     return await userRepo.save(user);
 };
 
