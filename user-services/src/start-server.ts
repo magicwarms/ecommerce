@@ -58,7 +58,7 @@ app.use((_req: Request, res: Response) => {
 // handle 500 Any error
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err);
-    logger.error(err);
+    logger.error({ message: err });
     return res.status(500).json({
         success: false,
         data: {},
