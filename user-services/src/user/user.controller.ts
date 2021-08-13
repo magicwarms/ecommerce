@@ -28,18 +28,12 @@ export const findUser = async (req: Request, res: Response) => {
     });
 };
 
-export const updateOrStoreUser = (req: Request, res: Response, next: NextFunction) => {
+export const updateOrStoreUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.body.id;
         let status = !userId ? "saved" : "updated";
-        let storeOrUpdateUser;
-        const menuBody = req.body;
-        if (!userId) {
-            storeOrUpdateUser = UserService.createUser(menuBody);
-        } else {
-            storeOrUpdateUser = UserService.updateUser(menuBody);
-        }
-        if (!storeOrUpdateUser) {
+        const updateOrStoreUser = await UserService.updateOrStoreUser(req.body);
+        if (!updateOrStoreUser) {
             return res.status(500).json({
                 success: false,
                 data: null,
@@ -48,7 +42,7 @@ export const updateOrStoreUser = (req: Request, res: Response, next: NextFunctio
         }
         return res.status(200).json({
             success: true,
-            data: storeOrUpdateUser,
+            data: updateOrStoreUser,
             message: `User data successfully ${status}`,
         });
     } catch (err) {
@@ -67,7 +61,14 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
                 message: `User ID is required`,
             });
         }
-        UserService.deleteUser(userId);
+        const deleteUser = await UserService.deleteUser(userId);
+        if (!deleteUser.affected) {
+            return res.status(200).json({
+                success: true,
+                data: null,
+                message: "User data not successfully deleted",
+            });
+        }
         return res.status(200).json({
             success: true,
             data: null,

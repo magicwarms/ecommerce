@@ -25,8 +25,6 @@ userRouter.get("/user", UserController.findAllUser);
 // GET user/get?id=
 userRouter.get("/user/get", UserController.findUser);
 // POST user
-userRouter.post("/user/store", UserController.updateOrStoreUser);
-// PUT user
-userRouter.put("/user/update", UserController.updateOrStoreUser);
+userRouter.post("/user/update-store", UserController.updateOrStoreUser);
 // DELETE user
 userRouter.delete("/user/delete", UserController.deleteUser);

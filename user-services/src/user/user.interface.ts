@@ -1,9 +1,9 @@
 export interface UserInterface {
-    id?: string;
+    id: string;
     firstname: string;
     lastname: string;
     email: string;
-    password?: string;
+    password: string;
     createdDate: Date;
     updatedDate: Date;
     deletedDate: Date;
