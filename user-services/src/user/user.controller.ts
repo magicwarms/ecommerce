@@ -40,7 +40,7 @@ export const updateOrStoreUser = async (req: Request, res: Response, next: NextF
                 message: `User data not successfully ${status}`,
             });
         }
-        updateOrStoreUser.password = "";
+        // delete updateOrStoreUser.password;
         return res.status(200).json({
             success: true,
             data: updateOrStoreUser,

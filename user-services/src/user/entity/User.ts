@@ -6,27 +6,17 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
     Index,
+    OneToOne,
+    JoinColumn,
 } from "typeorm";
 import { Length, IsEmail } from "class-validator";
+import { Profile } from "./Profile";
 
 @Entity()
-@Index(["firstname", "lastname"])
 @Index(["email"])
 export class User {
     @PrimaryGeneratedColumn("uuid")
     id!: string;
-
-    @Column({ type: "varchar", width: 30 })
-    @Length(2, 30, {
-        message: "Firstname is too short. Minimal length is $constraint1 characters",
-    })
-    firstname!: string;
-
-    @Column({ type: "varchar", width: 60 })
-    @Length(2, 60, {
-        message: "Lastname is too short. Minimal length is $constraint1 characters",
-    })
-    lastname!: string;
 
     @Column({ type: "varchar", width: 50 })
     @IsEmail(undefined, { message: "Email not valid" })
@@ -38,12 +28,19 @@ export class User {
     })
     password!: string;
 
+    @Column({ select: false })
+    profileId!: string;
+
+    @OneToOne(() => Profile, { eager: true })
+    @JoinColumn()
+    profile?: Profile;
+
     @CreateDateColumn({ type: "timestamp with time zone" })
-    createdDate!: Date;
+    createdDate?: Date;
 
     @UpdateDateColumn({ type: "timestamp with time zone" })
-    updatedDate!: Date;
+    updatedDate?: Date;
 
     @DeleteDateColumn({ type: "timestamp with time zone" })
-    deletedDate!: Date;
+    deletedDate?: Date;
 }
