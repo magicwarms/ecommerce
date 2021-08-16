@@ -29,7 +29,7 @@ export const updateOrStoreUser = async (newUser: UserInterface): Promise<UserInt
             newUser.password = hash;
             newUser.id = updateOrUser.id;
             const updatePassword = await UserRepository.updateOrStoreUser(newUser);
-            if (!updatePassword) return new Error("Generate hash password error}");
+            if (!updatePassword) return new Error("Generate hash password error");
         });
     }
     return updateOrUser;

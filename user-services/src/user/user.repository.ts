@@ -1,19 +1,20 @@
 import { getConnection } from "typeorm";
 import { UserInterface } from "./user.interface";
 import { User } from "./entity/User";
+import validation from "../config/validation";
 
-// const cacheDuration = 300000;
+const cacheDuration = 300000;
 const userRepo = getConnection().getRepository(User);
 /**
  * Repository Methods
  */
 
 export const findAllUser = async () => {
-    return await userRepo.find();
+    return await userRepo.find({ cache: cacheDuration });
 };
 
 export const findUser = async (id: String) => {
-    return await userRepo.findOne({ where: { id }, cache: true });
+    return await userRepo.findOne({ where: { id }, cache: cacheDuration });
 };
 
 export const updateOrStoreUser = async (data: UserInterface) => {
@@ -23,6 +24,7 @@ export const updateOrStoreUser = async (data: UserInterface) => {
     user.lastname = data.lastname;
     user.email = data.email;
     user.password = data.password;
+    await validation(user);
 
     return await userRepo.save(user);
 };

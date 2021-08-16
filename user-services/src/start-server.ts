@@ -55,6 +55,15 @@ app.use((_req: Request, res: Response) => {
         message: "API route not found",
     });
 });
+// handle 422 Any error
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+    logger.error({ message: err });
+    return res.status(422).json({
+        success: false,
+        data: err,
+        message: `User input error`,
+    });
+});
 // handle 500 Any error
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     console.error(err);
