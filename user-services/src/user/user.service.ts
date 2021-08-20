@@ -36,12 +36,20 @@ export const updateOrStoreUser = async (userData: any): Promise<User | Error> =>
             if (err) logger.error({ message: err });
             newUser.password = hash;
             newUser.id = updateOrStoreUser.id;
-            const updatePassword = await UserRepository.updatePasswordUser(newUser);
-            if (!updatePassword) return new Error("Generate and store hash password error");
+            const updatePassword = await UserRepository.changePasswordUser(newUser);
+            if (!updatePassword) return new Error("Store hash password error");
         });
     }
     return updateOrStoreUser;
 };
 export const deleteUser = async (id: string): Promise<any> => {
     return await UserRepository.deleteUser(id);
+};
+
+export const changePasswordUser = async (id: string, password: string): Promise<any> => {
+    bcrypt.hash(password, 12, async (err, hash) => {
+        if (err) logger.error({ message: err });
+        const updatePassword = await UserRepository.changePasswordUser({ id, password: hash });
+        if (!updatePassword) return new Error("Store hash password error");
+    });
 };

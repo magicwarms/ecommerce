@@ -80,3 +80,33 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
         next(err);
     }
 };
+
+export const changePasswordUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const userId = String(req.body.id);
+        const password = String(req.body.password);
+        if (userId === null || userId === "") {
+            return res.status(422).json({
+                success: false,
+                data: null,
+                message: "User ID is required",
+            });
+        }
+        if (password === null || password === "") {
+            return res.status(422).json({
+                success: false,
+                data: null,
+                message: "Password is required",
+            });
+        }
+        const updatePassword = await UserService.changePasswordUser(userId, password);
+        return res.status(200).json({
+            success: true,
+            data: updatePassword,
+            message: "Password changed",
+        });
+    } catch (err) {
+        logger.error(err);
+        next(err);
+    }
+};

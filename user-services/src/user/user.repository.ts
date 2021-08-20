@@ -47,7 +47,7 @@ export const updateOrStoreUser = async (data: User) => {
     return await userRepo.save(user);
 };
 
-export const updatePasswordUser = async (data: User) => {
+export const changePasswordUser = async (data: any) => {
     const user = new User();
     user.id = data.id;
     user.password = data.password;
