@@ -79,8 +79,10 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 function setupCloseOnExit(server: Server) {
     async function exitHandler(options = { exit: false }) {
         server.close(() => {
-            console.info(`Server successfully closed at ${currentTime}`);
-            if (options.exit) process.exit(1);
+            if (options.exit) {
+                console.info(`Server successfully closed at ${currentTime}`);
+                process.exit(1);
+            }
         });
     }
 

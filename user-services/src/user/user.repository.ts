@@ -52,6 +52,8 @@ export const changePasswordUser = async (data: any) => {
     user.id = data.id;
     user.password = data.password;
     await validation(user);
+    user.password = data.hash;
+
     return await userRepo.save(user);
 };
 
