@@ -37,7 +37,7 @@ export const updateOrStoreUser = async (userData: any): Promise<User | Error> =>
             newUser.password = hash;
             newUser.id = updateOrStoreUser.id;
             const updatePassword = await UserRepository.changePasswordUser(newUser);
-            if (!updatePassword) return new Error("Store hash password error");
+            if (!updatePassword) throw new Error("Store hash password error");
         });
     }
     return updateOrStoreUser;
@@ -49,6 +49,6 @@ export const deleteUser = async (id: string): Promise<any> => {
 export const changePasswordUser = async (id: string, password: string): Promise<any> => {
     const hash = bcrypt.hashSync(password, 12);
     const updatePassword = await UserRepository.changePasswordUser({ id, password, hash });
-    if (!updatePassword) return new Error("Store hash password error");
+    if (!updatePassword) throw new Error("Store hash password error");
     return updatePassword;
 };
