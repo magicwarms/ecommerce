@@ -42,7 +42,7 @@ export const updateOrStoreUser = async (data: User) => {
     user.profileId = data.profileId;
     user.email = data.email;
     if (typeof data.id === "undefined") user.password = data.password;
-    // await validation(user);
+    await validation(user);
     if (data.id !== "") getConnection().queryResultCache?.remove([`user-${data.id}`]);
     return await userRepo.save(user);
 };
@@ -51,7 +51,7 @@ export const changePasswordUser = async (data: any) => {
     const user = new User();
     user.id = data.id;
     user.password = data.password;
-    // await validation(user);
+    await validation(user);
     return await userRepo.save(user);
 };
 

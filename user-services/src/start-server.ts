@@ -22,7 +22,7 @@ const numCPUS = os.cpus().length;
  */
 process.env.TZ = "Asia/Jakarta";
 
-const currentTime = new Date(Date.now()).toTimeString();
+const currentTime = new Date().toJSON().slice(0, 10).replace(/-/g, "/") + " " + new Date(Date.now()).toTimeString();
 /**
  * App Variables
  */
@@ -78,11 +78,10 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 // ensures we close the server in the event of an error.
 function setupCloseOnExit(server: Server) {
     async function exitHandler(options = { exit: false }) {
-        server.close();
-        console.info(`Server successfully closed at ${currentTime}`);
-        if (options.exit) {
-            process.exit(1);
-        }
+        server.close(() => {
+            console.info(`Server successfully closed at ${currentTime}`);
+            if (options.exit) process.exit(1);
+        });
     }
 
     // do something when app is closing

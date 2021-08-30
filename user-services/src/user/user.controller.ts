@@ -99,10 +99,10 @@ export const changePasswordUser = async (req: Request, res: Response, next: Next
                 message: "Password is required",
             });
         }
-        const updatePassword = await UserService.changePasswordUser(userId, password);
+        await UserService.changePasswordUser(userId, password);
         return res.status(200).json({
             success: true,
-            data: updatePassword,
+            data: {},
             message: "Password changed",
         });
     } catch (err) {
