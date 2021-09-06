@@ -1,21 +1,19 @@
-import { getConnection } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { User } from "./entity/User";
 import { Profile } from "./entity/Profile";
 import validation from "../config/validation";
 
 const cacheDuration = 300000;
-const userRepo = getConnection().getRepository(User);
-const userProfileRepo = getConnection().getRepository(Profile);
 /**
  * Repository Methods
  */
 
 export const findAllUser = async () => {
-    return await userRepo.find({ cache: cacheDuration, relations: ["profile"] });
+    return await getRepository(User).find({ cache: cacheDuration, relations: ["profile"] });
 };
 
 export const findUser = async (id: String) => {
-    return await userRepo.findOne({
+    return await getRepository(User).findOne({
         where: { id },
         cache: {
             id: `user-${id}`,
@@ -33,7 +31,7 @@ export const updateOrStoreUserProfile = async (data: Profile) => {
     profile.gender = data.gender;
     await validation(profile);
 
-    return await userProfileRepo.save(profile);
+    return await getRepository(Profile).save(profile);
 };
 
 export const updateOrStoreUser = async (data: User) => {
@@ -44,7 +42,7 @@ export const updateOrStoreUser = async (data: User) => {
     if (typeof data.id === "undefined") user.password = data.password;
     await validation(user);
     if (data.id !== "") getConnection().queryResultCache?.remove([`user-${data.id}`]);
-    return await userRepo.save(user);
+    return await getRepository(User).save(user);
 };
 
 export const changePasswordUser = async (data: any) => {
@@ -54,9 +52,9 @@ export const changePasswordUser = async (data: any) => {
     await validation(user);
     user.password = data.hash;
 
-    return await userRepo.save(user);
+    return await getRepository(User).save(user);
 };
 
 export const deleteUser = async (id: string) => {
-    return await userRepo.softDelete(id);
+    return await getRepository(User).softDelete(id);
 };
