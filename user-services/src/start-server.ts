@@ -2,21 +2,16 @@
  * Required External Modules
  */
 import * as dotenv from "dotenv";
-import express, { NextFunction, Request, Response } from "express";
-import { Server } from "http";
-import cluster from "cluster";
-import os from "os";
+import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import helmet from "helmet";
 
-dotenv.config();
 import logger from "./config/logger";
-
 import { userRouter } from "./user/user.router";
+
 import { rateLimiter, speedLimiter } from "./utilities/rateSpeedLimiter";
 
-const numCPUS = os.cpus().length;
-
+dotenv.config();
 /**
  * Set timezone
  */
@@ -32,7 +27,7 @@ if (!process.env.APP_PORT) {
 }
 
 const PORT: number = parseInt(process.env.APP_PORT as string, 10);
-const app = express();
+const app: Application = express();
 /**
  *  App Configuration
  */
@@ -76,7 +71,7 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 // ensures we close the server in the event of an error.
-function setupCloseOnExit(server: Server) {
+function setupCloseOnExit(server: any) {
     async function exitHandler(options = { exit: false }) {
         server.close(() => {
             if (options.exit) {
@@ -98,45 +93,6 @@ function setupCloseOnExit(server: Server) {
 }
 
 /**
- * Setup server connection here
- */
-const startServerCluster = () => {
-    console.info("Production/Staging server mode started!");
-    // Activate cluster for production mode
-    if (cluster.isMaster) {
-        console.info(`Master ${process.pid} is running`);
-        for (let i = 0; i < numCPUS; i += 1) {
-            cluster.fork();
-        }
-        cluster.on("exit", (worker, code) => {
-            // If cluster crashed, start new cluster connection
-            if (code !== 0 && !worker.exitedAfterDisconnect) {
-                console.warn("Cluster crashed, starting new cluster");
-                cluster.fork();
-            }
-        });
-    } else {
-        startServer()
-            .then()
-            .catch((err) => {
-                console.error(err);
-                logger.error(err);
-            });
-    }
-};
-
-const startServerDevelopment = () => {
-    console.info("Development server mode started!");
-    // Activate if development mode
-    startServer()
-        .then()
-        .catch((err) => {
-            console.error(err);
-            logger.error(err);
-        });
-};
-
-/**
  * Server Activation
  */
 function startServer() {
@@ -156,8 +112,4 @@ function startServer() {
     });
 }
 
-if (process.env.NODE_ENV === "development") {
-    startServerDevelopment();
-} else {
-    startServerCluster();
-}
+export default startServer;
